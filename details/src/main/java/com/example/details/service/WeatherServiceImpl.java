@@ -4,6 +4,9 @@ package com.example.details.service;
 
 import com.example.details.config.EndpointConfig;
 import com.example.details.pojo.City;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,8 +40,7 @@ public class WeatherServiceImpl implements WeatherService{
     }
 
     @Override
-    //change findcitynamebyid => find weather details by id
-    public Map<String, Map> findCityNameById(int id) {
+    public Map<String, Map> findWeatherDetailById(int id) {
         Map<String, Map> ans = restTemplate.getForObject(EndpointConfig.queryWeatherById + id, HashMap.class);
         return ans;
     }

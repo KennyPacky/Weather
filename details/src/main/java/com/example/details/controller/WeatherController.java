@@ -33,7 +33,7 @@ public class WeatherController {
 
     @GetMapping("/details/{id}")
     public ResponseEntity<?> queryWeatherByCity(@PathVariable int id) {
-        return new ResponseEntity<Map>(weatherService.findCityNameById(id), HttpStatus.OK);
+        return new ResponseEntity<Map>(weatherService.findWeatherDetailById(id), HttpStatus.OK);
     }
 
     @GetMapping("/details/port")
