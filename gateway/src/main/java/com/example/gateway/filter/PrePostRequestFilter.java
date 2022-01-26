@@ -5,9 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  *  filter order global
@@ -30,9 +37,37 @@ public class PrePostRequestFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         logger.info("pre log");
+        ServerHttpRequest request = exchange.getRequest();
+        String method = request.getMethodValue();
+
+        if(method.equals(HttpMethod.GET.toString())) {
+            Map map = request.getQueryParams();
+            HttpHeaders httpHeaders = HttpHeaders.writableHttpHeaders(request.getHeaders());
+            httpHeaders.add("uuid", UUID.randomUUID().toString().replace("-", ""));
+            logTrace(exchange, map.toString());
+        }
+
         return chain
                 .filter(exchange)
                 .then(Mono.fromRunnable(() -> logger.info("post log")));
+    }
+
+    private void logTrace(ServerWebExchange exchange, String param) {
+        ServerHttpRequest serverHttpRequest = exchange.getRequest();
+        String path = serverHttpRequest.getURI().getPath();
+        String method = serverHttpRequest.getMethodValue();
+        String headers = serverHttpRequest.getHeaders().entrySet()
+                .stream()
+                .map(entry -> "            " + entry.getKey() + ": [" + String.join(";", entry.getValue()) + "]")
+                .collect(Collectors.joining("\n"));
+        logger.info("\n" + "----------------             ----------------             ---------------->>\n" +
+                        "HttpMethod : {}\n" +
+                        "Uri        : {}\n" +
+                        "Param      : {}\n" +
+                        "Headers    : \n" +
+                        "{}\n" +
+                        "\"<<----------------             ----------------             ----------------"
+                , method, path, param, headers);
     }
 
     @Override

@@ -17,6 +17,9 @@ public class ASameOrderFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         logger.info("same order filter pre log");
+
+
+
         return chain
                 .filter(exchange)
                 .then(Mono.fromRunnable(() -> logger.info("same order filter post log")));
