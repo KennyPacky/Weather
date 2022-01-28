@@ -10,5 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CityID {
+    private double timestamp;
     private List<Integer> data;
 }

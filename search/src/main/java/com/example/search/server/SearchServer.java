@@ -1,11 +1,11 @@
 package com.example.search.server;
 
-import com.example.search.domain.SearchResponse;
+import com.example.search.pojo.DetailsServerData;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public interface SearchServer {
-    List<SearchResponse> getCityWeather(String city_name);
+    List<DetailsServerData> getCityWeather(List<String> city_name);
 }
