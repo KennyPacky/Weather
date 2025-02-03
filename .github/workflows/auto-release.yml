@@ -20,7 +20,7 @@ jobs:
 
       - name: Create Pull Request
         id: create_pr
-        uses: KennyPacky/Weather@v6
+        uses: KennyPacky/Weather@latest
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: ${{ github.event.inputs.target_branch }}
