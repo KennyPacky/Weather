@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       source_branch:
-        description: "develop"
+        description: "Branch to merge from"
         required: true
       target_branch:
-        description: "master"
+        description: "Branch to merge into"
         required: true
 
 jobs:
