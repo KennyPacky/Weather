@@ -1,0 +1,38 @@
+name: Automation Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Branch to merge from"
+        required: true
+      target_branch:
+        description: "Branch to merge into"
+        required: true
+
+jobs:
+  merge-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        id: create_pr
+        uses: KennyPacky/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ github.event.inputs.target_branch }}
+          branch: ${{ github.event.inputs.source_branch }}
+          title: "Auto Merge: ${{ github.event.inputs.source_branch }} → ${{ github.event.inputs.target_branch }}"
+          body: "Merging `${{ github.event.inputs.source_branch }}` into `${{ github.event.inputs.target_branch }}` automatically."
+          draft: false
+
+      - name: Auto-merge Pull Request
+        run: |
+          PR_URL="${{ steps.create_pr.outputs.pull-request-url }}"
+          PR_NUMBER="${PR_URL##*/}"
+          gh pr merge $PR_NUMBER --admin --merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
