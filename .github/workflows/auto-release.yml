@@ -18,12 +18,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Update Changelog
+        run: |
+          curl -o git-chglog -L https://github.com/git-chglog/git-chglog/releases/download/0.9.1/git-chglog_linux_amd64
+          chmod u+x git-chglog
+          ./git-chglog -o CHANGELOG.md
+          rm git-chglog
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ github.event.inputs.target_branch }}  # Target branch (e.g., master)
-          branch: ${{ github.event.inputs.source_branch }}  # Source branch (e.g., develop)
+          base: update-changelog
+          branch: develop
           title: "Merge Request: ${{ github.event.inputs.source_branch }} → ${{ github.event.inputs.target_branch }}"
           body: "This is an auto-generated pull request to merge `${{ github.event.inputs.source_branch }}` into `${{ github.event.inputs.target_branch }}`."
           draft: false
