@@ -21,7 +21,7 @@ jobs:
       - name: Create Pull Request
         id: create_pr
         run: |
-          PR_URL=$(gh pr create -B ${{ github.event.inputs.target_branch }} -H ${{ github.event.inputs.source_branch }} --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action' --json url -q '.url')
+          PR_URL=$(gh pr create -B ${{ github.event.inputs.target_branch }} -H ${{ github.event.inputs.source_branch }} --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action')
           echo "pull-request-url=$PR_URL" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
