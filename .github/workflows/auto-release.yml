@@ -28,7 +28,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Auto-merge Pull Request
-        run: |
-          echo "${{ env.pull-request-url }}"
+        run: gh pr merge ${{ env.pull-request-url }} --merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
