@@ -29,8 +29,8 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: update-changelog
-          branch: develop
+          base: develop
+          branch: update-changelog
           title: "Merge Request: ${{ github.event.inputs.source_branch }} → ${{ github.event.inputs.target_branch }}"
           body: "This is an auto-generated pull request to merge `${{ github.event.inputs.source_branch }}` into `${{ github.event.inputs.target_branch }}`."
           draft: false
