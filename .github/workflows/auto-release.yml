@@ -45,6 +45,16 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
+      - name: Make Changes
+        run: |
+          echo "## Post Release Update - ${{ env.date }}" >> README.md
+          echo "" >> README.md
+          echo "This is an automated update after the release on ${{ env.date }}." >> README.md
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add README.md
+          git commit -m "Post release update on ${{ env.date }}"
+
       - name: Create and Edit Feature Branch
         id: post_release
         uses: peter-evans/create-pull-request@v6
