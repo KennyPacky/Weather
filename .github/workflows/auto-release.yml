@@ -1,0 +1,30 @@
+name: Automation Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: "Branch to merge from"
+        required: true
+      target_branch:
+        description: "Branch to merge into"
+        required: true
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ github.event.inputs.target_branch }}  # Target branch (e.g., master)
+          branch: ${{ github.event.inputs.source_branch }}  # Source branch (e.g., develop)
+          title: "Merge Request: ${{ github.event.inputs.source_branch }} → ${{ github.event.inputs.target_branch }}"
+          body: "This is an auto-generated pull request to merge `${{ github.event.inputs.source_branch }}` into `${{ github.event.inputs.target_branch }}`."
+          draft: false
+          delete-branch: false  # Ensures the source branch is not deleted
