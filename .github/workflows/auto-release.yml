@@ -51,7 +51,7 @@ jobs:
 
       - name: Make Changes
         run: |
-          git checkout -b post-release-${{ env.pull-request-url }}
+          git checkout -b "post-release-${{ env.pull-request-url }}"
           echo "## Post Release Update - ${{ env.date }}" >> README.md
           echo "" >> README.md
           echo "This is an automated update after the release on ${{ env.date }}." >> README.md
