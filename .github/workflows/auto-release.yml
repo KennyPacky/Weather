@@ -21,7 +21,9 @@ jobs:
       - name: Create Pull Request
         id: create_pr
         run: |
-          PR_URL=$(gh pr create -B ${{ github.event.inputs.target_branch }} -H ${{ github.event.inputs.source_branch }} --title 'Merge branch_to_merge into base_branch' --body 'Created by Github action')
+          CURRENT_TIME=$(date +  "%Y-%m-%d")
+          PR_TITLE="Autotmation Release: $CURRENT_TIME"
+          PR_URL=$(gh pr create -B ${{ github.event.inputs.target_branch }} -H ${{ github.event.inputs.source_branch }} --title $PR_TITLE --body 'Created by Github action')
           echo $PR_URL
           echo "pull-request-url=$PR_URL" >> $GITHUB_ENV
         env:
