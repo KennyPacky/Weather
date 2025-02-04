@@ -59,13 +59,22 @@ jobs:
           git add README.md
           git commit -m "Post release update on ${{ env.date }}"
 
-      - name: Create and Edit Feature Branch
-        id: post_release
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ github.event.inputs.source_branch }}
-          branch: update-feature-branch
-          title: "Post Release: ${{ env.date }}"
-          body: 'Created by Github action'
-          draft: false
+      - name: Create Pull Request
+        id: create_pull_request
+        run: |
+          CURRENT_TIME=$(date +"%Y-%m-%d")
+          PR_TITLE="Autotmation Release: $CURRENT_TIME"
+          PR_URL=$(gh pr create -B ${{ github.event.inputs.target_branch }} -H ${{ github.event.inputs.source_branch }} --title "$PR_TITLE" --body 'Created by Github action')
+          echo "PR url: $PR_URL"
+          if [[ "$PR_URL" == "ERROR" ]]; then
+            echo "Failed to create PR"
+            exit 1
+          fi
+          echo "pull-request-url=$PR_URL" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-merge Pull Request
+        run: gh pr merge ${{ env.pull-request-url }} --merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
