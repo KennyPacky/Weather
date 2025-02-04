@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create Pull Request
-        id: release
+        id: create_pull_request
         run: |
           CURRENT_TIME=$(date +"%Y-%m-%d")
           PR_TITLE="Autotmation Release: $CURRENT_TIME"
@@ -51,6 +51,7 @@ jobs:
 
       - name: Make Changes
         run: |
+          git checkout -b post-release-${{ env.pull-request-url }}
           echo "## Post Release Update - ${{ env.date }}" >> README.md
           echo "" >> README.md
           echo "This is an automated update after the release on ${{ env.date }}." >> README.md
@@ -58,14 +59,24 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add README.md
           git commit -m "Post release update on ${{ env.date }}"
+          git push origin post-release
 
-      - name: Create and Edit Feature Branch
-        id: post_release
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ github.event.inputs.source_branch }}
-          branch: update-feature-branch
-          title: "Post Release: ${{ env.date }}"
-          body: 'Created by Github action'
-          draft: false
+      - name: Create Pull Request
+        id: create_pull_request
+        run: |
+          CURRENT_TIME=$(date +"%Y-%m-%d")
+          PR_TITLE="Autotmation Post Release: $CURRENT_TIME"
+          PR_URL=$(gh pr create -B ${{ github.event.inputs.source_branch }} -H "post-release-${{ env.pull-request-url }}" --title "$PR_TITLE" --body 'Created by Github action')
+          echo "PR url: $PR_URL"
+          if [[ "$PR_URL" == "ERROR" ]]; then
+            echo "Failed to create PR"
+            exit 1
+          fi
+          echo "pull-request-url=$PR_URL" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-merge Pull Request
+        run: gh pr merge ${{ env.pull-request-url }} --merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
