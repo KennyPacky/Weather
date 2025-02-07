@@ -24,10 +24,6 @@ pipeline {
   }
 
 
-//  environment {
-////    GH_TOKEN = credentials('') // GitHub Token
-//  }
-
   stages {
 
     stage('Checkout Repositories') {
