@@ -48,8 +48,8 @@ jobs:
               COUNT=$((COUNT+1))
             done
         # run: gh pr merge ${{ env.pull-request-url }} --merge
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   create-post-release:
     needs: create-release
