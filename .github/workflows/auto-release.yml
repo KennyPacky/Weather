@@ -40,6 +40,7 @@ jobs:
             COUNT=0
   
             while [[ $COUNT -lt $MAX_RETRIES ]]; do
+              echo "Waiting for 5 mins..."
               sleep $RETRY_DELAY
               echo "Attempting to merge PR (Try: $((COUNT+1)))..."
               gh pr merge ${{ env.pull-request-url }} --merge --merge && break
@@ -98,6 +99,17 @@ jobs:
 
       - name: Delete Post-Release Branch
         run: |
-          git push origin --delete "${{ env.BRANCH_NAME }}"
+            MAX_RETRIES=2
+            RETRY_DELAY=300  # 5 minutes in seconds
+            COUNT=0
+  
+            while [[ $COUNT -lt $MAX_RETRIES ]]; do
+              echo "Waiting for 5 mins..."
+              sleep $RETRY_DELAY
+              echo "Attempting to merge PR (Try: $((COUNT+1)))..."
+              gh pr merge ${{ env.pull-request-url }} --merge --merge && break
+              echo "Merge failed, retrying in $RETRY_DELAY seconds..."
+              COUNT=$((COUNT+1))
+            done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
