@@ -33,10 +33,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Auto-merge Pull Request
-        run: gh pr merge ${{ env.pull-request-url }} --merge
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Auto-merge Pull Request with Retry
+        run: |
+            MAX_RETRIES=2
+            RETRY_DELAY=300  # 5 minutes in seconds
+            COUNT=0
+  
+            while [[ $COUNT -lt $MAX_RETRIES ]]; do
+              echo "Attempting to merge PR (Try: $((COUNT+1)))..."
+              gh pr merge $PULL_REQUEST_URL --merge && break
+              echo "Merge failed, retrying in $RETRY_DELAY seconds..."
+              sleep $RETRY_DELAY
+              COUNT=$((COUNT+1))
+            done
+        # run: gh pr merge ${{ env.pull-request-url }} --merge
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   create-post-release:
     needs: create-release
