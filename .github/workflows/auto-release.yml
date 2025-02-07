@@ -93,11 +93,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Auto-merge Pull Request
-        run: gh pr merge ${{ env.pull-request-url }} --merge
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete Post-Release Branch
         run: |
             MAX_RETRIES=2
             RETRY_DELAY=300  # 5 minutes in seconds
@@ -111,5 +106,10 @@ jobs:
               echo "Merge failed, retrying in $RETRY_DELAY seconds..."
               COUNT=$((COUNT+1))
             done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete Post-Release Branch
+        run: git push origin --delete "${{ env.BRANCH_NAME }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
