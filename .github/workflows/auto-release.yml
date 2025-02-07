@@ -40,10 +40,10 @@ jobs:
             COUNT=0
   
             while [[ $COUNT -lt $MAX_RETRIES ]]; do
-              echo "Attempting to merge PR (Try: $((COUNT+1)))..."
-              gh pr merge $PULL_REQUEST_URL --merge && break
-              echo "Merge failed, retrying in $RETRY_DELAY seconds..."
               sleep $RETRY_DELAY
+              echo "Attempting to merge PR (Try: $((COUNT+1)))..."
+              gh pr merge ${{ env.pull-request-url }} --merge --merge && break
+              echo "Merge failed, retrying in $RETRY_DELAY seconds..."
               COUNT=$((COUNT+1))
             done
         # run: gh pr merge ${{ env.pull-request-url }} --merge
